@@ -662,7 +662,11 @@ doLoading:
 					difference = -difference;
 				}
 
-				int32_t percussiveness = ((uint64_t)difference * 262144 / angle) >> 1;
+				// angle is 0 in digital silence. Dividing by zero is undefined, so give the result libgcc's division
+				// gives on the device: all ones, unless the dividend is 0 too.
+				uint64_t dividend = (uint64_t)difference * 262144;
+				uint64_t quotient = angle ? dividend / angle : dividend ? UINT64_MAX : 0;
+				int32_t percussiveness = quotient >> 1;
 
 				percussiveness = getTanH<23>(percussiveness);
 
