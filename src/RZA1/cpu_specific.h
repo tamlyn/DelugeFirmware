@@ -125,7 +125,12 @@ DMA channels:
 
 #define INTERNAL_MEMORY_BEGIN 0x20000000uL
 
+#ifdef WEBLUGE
+// The host has no cache, and no mirror of memory at this offset.
+#define UNCACHED_MIRROR_OFFSET 0
+#else
 #define UNCACHED_MIRROR_OFFSET 0x40000000
+#endif
 
 #define NUM_LEVEL_INDICATORS 2
 
