@@ -1,6 +1,7 @@
 #pragma once
 #include "gui/l10n/strings.h"
 #include "util/misc.h"
+#include <algorithm>
 #include <array>
 #include <optional>
 #include <string>
