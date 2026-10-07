@@ -39,7 +39,9 @@ bool lastWasNewline = false;
 	//  - bit 1 [1] Event counter reset
 	//  - bit 0 [1] Enable all counters.
 	uint32_t const pmcr = 0b10111;
+#if defined(__arm__)
 	asm volatile("MCR p15, 0, %0, c9, c12, 0\n" : : "r"(pmcr));
+#endif
 }
 
 // https://johnnylee-sde.github.io/Fast-unsigned-integer-to-hex-string/
@@ -86,6 +88,7 @@ void init() {
 	uint32_t const pmcr = 0;
 	uint32_t const pmcntenset = 0b10000000000000000000000000000000u;
 
+#if defined(__arm__)
 	asm volatile("MRC p15, 0, %0, c9, c12, 0\n"
 	             // Set bit 0, the "E" flag
 	             "orr %0, #1\n"
@@ -93,6 +96,7 @@ void init() {
 	             "MCR p15, 0, %1, c9, c12, 1\n"
 	             :
 	             : "r"(pmcr), "r"(pmcntenset));
+#endif
 
 	initFlag = true;
 }

@@ -28,12 +28,18 @@ const uint32_t uS = 400;
 
 [[gnu::always_inline]] inline uint32_t readCycleCounter() {
 	uint32_t cycles = 0;
+#if defined(__arm__)
 	asm volatile("MRC p15, 0, %0, c9, c13, 0" : "=r"(cycles) :);
+#endif
 	return cycles;
 }
 
 [[gnu::always_inline]] inline void readCycleCounter(uint32_t& time) {
+#if defined(__arm__)
 	asm volatile("MRC p15, 0, %0, c9, c13, 0" : "=r"(time) :);
+#else
+	time = 0;
+#endif
 }
 
 void init();
