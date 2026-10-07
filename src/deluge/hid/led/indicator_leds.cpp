@@ -21,6 +21,7 @@
 #include "gui/ui_timer_manager.h"
 #include <array>
 #include <cstdint>
+#include <cstdlib>
 
 extern "C" {
 #include "RZA1/gpio/gpio.h"

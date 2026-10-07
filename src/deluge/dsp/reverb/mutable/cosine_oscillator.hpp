@@ -5,6 +5,7 @@
 #pragma once
 #include "argon.hpp"
 #include <cmath>
+#include <numbers>
 #include <initializer_list>
 
 class DualCosineOscillator {

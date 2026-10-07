@@ -22,6 +22,7 @@
 #include "definitions_cxx.hpp"
 #include "io/midi/learned_midi.h"
 #include "playback/playback_handler.h"
+#include <array>
 
 class MIDIDevice;
 class MIDIInstrument;

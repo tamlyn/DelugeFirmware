@@ -1,5 +1,6 @@
 #include "rgb.h"
 #include "util/functions.h"
+#include <cstdlib>
 
 RGB RGB::fromHue(int32_t hue) {
 	RGB rgb{};

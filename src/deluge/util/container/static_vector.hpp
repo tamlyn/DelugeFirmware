@@ -56,6 +56,8 @@
 #include <algorithm>
 #include <array>
 #include <cstddef>     // for size_t
+#include <cstdio>      // for printf
+#include <cstdlib>     // for abort
 #include <cstdint>     // for fixed-width integer types
 #include <functional>  // for less and equal_to
 #include <iterator>    // for reverse_iterator and iterator traits
