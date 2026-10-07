@@ -25,12 +25,17 @@
 char emptySpacesMemory[sizeof(EmptySpaceRecord) * 512];
 char emptySpacesMemoryInternal[sizeof(EmptySpaceRecord) * 1024];
 char emptySpacesMemoryGeneral[sizeof(EmptySpaceRecord) * 256];
+#ifdef WEBLUGE
+// No linker script on the host, so webluge supplies the region bounds.
+#include "webluge/memory_map.h"
+#else
 extern uint32_t __sdram_bss_start;
 extern uint32_t __sdram_bss_end;
 extern uint32_t __heap_start;
 extern uint32_t __heap_end;
 extern uint32_t program_stack_start;
 extern uint32_t program_stack_end;
+#endif
 GeneralMemoryAllocator::GeneralMemoryAllocator() {
 	lock = false;
 
