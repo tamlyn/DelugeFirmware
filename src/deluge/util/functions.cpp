@@ -1329,12 +1329,12 @@ bool isAudioFilename(char const* filename) {
 	if (filename[0] == '.') {
 		return false;
 	}
-	char* dotPos = strrchr(filename, '.');
+	char const* dotPos = strrchr(filename, '.');
 	return (!strcasecmp(dotPos, ".WAV") || !strcasecmp(dotPos, ".AIF") || !strcasecmp(dotPos, ".AIFF"));
 }
 
 bool isAiffFilename(char const* filename) {
-	char* dotPos = strrchr(filename, '.');
+	char const* dotPos = strrchr(filename, '.');
 	return (dotPos != 0 && (!strcasecmp(dotPos, ".AIF") || !strcasecmp(dotPos, ".AIFF")));
 }
 
@@ -2131,7 +2131,7 @@ bool doesFilenameFitPrefixFormat(char const* fileName, char const* filePrefix, i
 		return false;
 	}
 
-	char* dotAddress = strrchr(fileName, '.');
+	char const* dotAddress = strrchr(fileName, '.');
 	if (!dotAddress) {
 		return false;
 	}

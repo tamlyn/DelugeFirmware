@@ -20,7 +20,7 @@ class Language {
 public:
 	using map_type = std::array<std::optional<std::string_view>, kNumStrings>;
 
-	Language(std::string name, Language const* fallback = nullptr) : name_(std::move(name)) {
+	Language(std::string_view name, Language const* fallback = nullptr) : name_(name) {
 		std::copy(fallback->map_.cbegin(), fallback->map_.cend(), this->map_.begin());
 	};
 
@@ -49,7 +49,7 @@ public:
 	[[nodiscard]] constexpr const Language& fallback() const { return *fallback_; }
 
 private:
-	std::string name_;
+	std::string_view name_;
 	map_type map_{};
 	const Language* fallback_ = nullptr;
 };

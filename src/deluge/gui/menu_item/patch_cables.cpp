@@ -105,7 +105,7 @@ void PatchCables::drawValue() {
 		return;
 	}
 
-	display->setScrollingText(options[currentValue].begin());
+	display->setScrollingText(options[currentValue].data());
 }
 
 void PatchCables::selectEncoderAction(int32_t offset) {

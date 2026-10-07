@@ -188,8 +188,8 @@ uint16_t lastRoutineTime;
 std::array<StereoSample, SSI_TX_BUFFER_NUM_SAMPLES> renderingBuffer __attribute__((aligned(CACHE_LINE_SIZE)));
 std::array<int32_t, 2 * SSI_TX_BUFFER_NUM_SAMPLES> reverbBuffer __attribute__((aligned(CACHE_LINE_SIZE)));
 
-StereoSample* renderingBufferOutputPos = renderingBuffer.begin();
-StereoSample* renderingBufferOutputEnd = renderingBuffer.begin();
+StereoSample* renderingBufferOutputPos = renderingBuffer.data();
+StereoSample* renderingBufferOutputEnd = renderingBuffer.data();
 
 int32_t masterVolumeAdjustmentL;
 int32_t masterVolumeAdjustmentR;
@@ -200,12 +200,12 @@ MonitoringAction monitoringAction;
 uint32_t saddr;
 
 std::array<VoiceSample, kNumVoiceSamplesStatic> voiceSamples{};
-VoiceSample* firstUnassignedVoiceSample = voiceSamples.begin();
+VoiceSample* firstUnassignedVoiceSample = voiceSamples.data();
 
 std::array<TimeStretcher, kNumTimeStretchersStatic> timeStretchers{};
-TimeStretcher* firstUnassignedTimeStretcher = timeStretchers.begin();
+TimeStretcher* firstUnassignedTimeStretcher = timeStretchers.data();
 std::array<Voice, kNumVoicesStatic> staticVoices{};
-Voice* firstUnassignedVoice = staticVoices.begin();
+Voice* firstUnassignedVoice = staticVoices.data();
 
 // You must set up dynamic memory allocation before calling this, because of its call to setupWithPatching()
 void init() {
@@ -624,8 +624,8 @@ void renderAudio(size_t numSamples) {
 
 	setMonitoringMode();
 
-	renderingBufferOutputPos = renderingBuffer.begin();
-	renderingBufferOutputEnd = renderingBuffer.begin() + numSamples;
+	renderingBufferOutputPos = renderingBuffer.data();
+	renderingBufferOutputEnd = renderingBuffer.data() + numSamples;
 }
 
 void renderAudioForStemExport(size_t numSamples) {
@@ -665,8 +665,8 @@ void renderAudioForStemExport(size_t numSamples) {
 	doMonitoring = false;
 	monitoringAction = MonitoringAction::NONE;
 
-	renderingBufferOutputPos = renderingBuffer.begin();
-	renderingBufferOutputEnd = renderingBuffer.begin() + numSamples;
+	renderingBufferOutputPos = renderingBuffer.data();
+	renderingBufferOutputEnd = renderingBuffer.data() + numSamples;
 }
 
 void flushMIDIGateBuffers() { // Flush everything out of the MIDI buffer now. At this stage, it would only really have
@@ -1418,7 +1418,7 @@ void unassignVoice(Voice* voice, Sound* sound, ModelStackWithSoundFlags* modelSt
 	}
 
 	if (shouldDispose) {
-		if (voice >= staticVoices.begin() && voice < staticVoices.end()) {
+		if (voice >= staticVoices.data() && voice < staticVoices.data() + staticVoices.size()) {
 			voice->nextUnassigned = firstUnassignedVoice;
 			firstUnassignedVoice = voice;
 		}
@@ -1449,7 +1449,7 @@ VoiceSample* solicitVoiceSample() {
 }
 
 void voiceSampleUnassigned(VoiceSample* voiceSample) {
-	if (voiceSample >= voiceSamples.begin() && voiceSample < voiceSamples.end()) {
+	if (voiceSample >= voiceSamples.data() && voiceSample < voiceSamples.data() + voiceSamples.size()) {
 		voiceSample->nextUnassigned = firstUnassignedVoiceSample;
 		firstUnassignedVoiceSample = voiceSample;
 	}
@@ -1478,7 +1478,7 @@ TimeStretcher* solicitTimeStretcher() {
 
 // There are no destructors. You gotta clean it up before you call this
 void timeStretcherUnassigned(TimeStretcher* timeStretcher) {
-	if (timeStretcher >= timeStretchers.begin() && timeStretcher < timeStretchers.end()) {
+	if (timeStretcher >= timeStretchers.data() && timeStretcher < timeStretchers.data() + timeStretchers.size()) {
 		timeStretcher->nextUnassigned = firstUnassignedTimeStretcher;
 		firstUnassignedTimeStretcher = timeStretcher;
 	}

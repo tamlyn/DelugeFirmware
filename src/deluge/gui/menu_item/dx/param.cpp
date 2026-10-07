@@ -348,7 +348,7 @@ void DxParam::flashParamName() {
 		display->setScrollingText(desc_global_short[param - 6 * 21], 0, 600, 1);
 	}
 	else {
-		display->setScrollingText(getTitle().begin(), 0, 600, 1);
+		display->setScrollingText(getTitle().data(), 0, 600, 1);
 	}
 }
 

@@ -1482,7 +1482,7 @@ ActionResult InstrumentClipView::padAction(int32_t x, int32_t y, int32_t velocit
 				if (path == &nothing) {
 					continue;
 				}
-				char* slashAddress = strrchr(path, '/');
+				char* slashAddress = const_cast<char*>(strrchr(path, '/'));
 				if (slashAddress == NULL) {
 					continue;
 				}
