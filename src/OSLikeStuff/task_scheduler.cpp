@@ -28,6 +28,10 @@
 
 extern "C" {
 #include "RZA1/ostm/ostm.h"
+#if WEBLUGE
+// Host builds have no real time: the host moves its clock on when nothing is due.
+void webluge_scheduler_idle(void);
+#endif
 }
 
 #define SCHEDULER_DETAILED_STATS (0 && ENABLE_TEXT_OUTPUT)
@@ -381,6 +385,11 @@ bool TaskManager::yield(RunCondition until, double timeout) {
 		}
 		else {
 			bool addedTask = checkConditionalTasks();
+#if WEBLUGE
+			if (!addedTask) {
+				webluge_scheduler_idle();
+			}
+#endif
 			// if we sorted our list then we should get back to running things and not print stats
 			if (!addedTask && newTime > lastPrintedStats + 10) {
 				lastPrintedStats = newTime;
@@ -420,6 +429,11 @@ void TaskManager::start(double duration) {
 		}
 		else {
 			bool addedTask = checkConditionalTasks();
+#if WEBLUGE
+			if (!addedTask) {
+				webluge_scheduler_idle();
+			}
+#endif
 			// if we sorted our list then we should get back to running things and not print stats
 			if (!addedTask && newTime > lastPrintedStats + 10) {
 				lastPrintedStats = newTime;
