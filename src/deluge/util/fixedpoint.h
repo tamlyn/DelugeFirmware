@@ -16,6 +16,8 @@
  */
 #pragma once
 
+#include <algorithm>
+#include <bit>
 #include <cstdint>
 // signed 31 fractional bits (e.g. one would be 1<<31 but can't be represented)
 using q31_t = int32_t;
@@ -84,6 +86,8 @@ inline int32_t clz(uint32_t input) {
 	return out;
 }
 #else
+// Bit-exact equivalents of the ARM instructions above, following the pseudocode in the ARM Architecture
+// Reference Manual, so that host builds produce the same audio as the hardware.
 
 static inline q31_t multiply_32x32_rshift32(q31_t a, q31_t b) {
 	return (q31_t)(((int64_t)a * (int64_t)b) >> 32);
@@ -92,33 +96,37 @@ static inline q31_t multiply_32x32_rshift32(q31_t a, q31_t b) {
 // This multiplies two numbers in signed Q31 fixed point and rounds the result
 
 static inline q31_t multiply_32x32_rshift32_rounded(q31_t a, q31_t b) {
-	return (q31_t)(((int64_t)a * (int64_t)b) >> 32);
+	return (q31_t)(((int64_t)a * (int64_t)b + 0x80000000) >> 32);
 }
+
+// The accumulating instructions round the 64-bit sum, not the product, and wrap on overflow.
 
 // Multiplies A and B, adds to sum, and returns output
 
 static inline q31_t multiply_accumulate_32x32_rshift32_rounded(q31_t sum, q31_t a, q31_t b) {
-	return sum + (q31_t)(((int64_t)a * (int64_t)b) >> 32);
+	return (q31_t)((uint32_t)sum + (uint32_t)(((int64_t)a * (int64_t)b + 0x80000000) >> 32));
 }
 
 // Multiplies A and B, subtracts from sum, and returns output
 
 static inline q31_t multiply_subtract_32x32_rshift32_rounded(q31_t sum, q31_t a, q31_t b) {
-	return sum - (q31_t)(((int64_t)a * (int64_t)b) >> 32);
+	return (q31_t)((uint32_t)sum + (uint32_t)((0x80000000 - (int64_t)a * (int64_t)b) >> 32));
 }
 
-// computes limit((val >> rshift), 2**bits)
+// Saturates val to the range of a signed integer with this many bits
 template <uint8_t bits>
 static inline int32_t signed_saturate(int32_t val) {
-	return std::min(val, 1 << bits);
+	static_assert(bits >= 1 && bits <= 32);
+	return (int32_t)std::clamp<int64_t>(val, -(int64_t{1} << (bits - 1)), (int64_t{1} << (bits - 1)) - 1);
 }
 
 static inline int32_t add_saturation(int32_t a, int32_t b) __attribute__((always_inline, unused));
 static inline int32_t add_saturation(int32_t a, int32_t b) {
-	return a + b;
+	return (int32_t)std::clamp<int64_t>((int64_t)a + b, INT32_MIN, INT32_MAX);
 }
 
+// Unlike __builtin_clz, defined for 0
 inline int32_t clz(uint32_t input) {
-	return __builtin_clz(input);
+	return std::countl_zero(input);
 }
 #endif
