@@ -45,11 +45,11 @@ int32x4_t multiplied;
 for (int32_t i = 0; i < (kInterpolationMaxNumSamples >> 3); i++) {
 
 	if (i == 0)
-		multiplied = vmull_s16(vget_low_s16(kernelVector[i]), interpolationBuffer[0][i << 1]);
+		multiplied = vmull_s16(vget_low_s16(kernelVector[i]), vld1_s16(&interpolationBuffer[0][i << 3]));
 	else
-		multiplied = vmlal_s16(multiplied, vget_low_s16(kernelVector[i]), interpolationBuffer[0][i << 1]);
+		multiplied = vmlal_s16(multiplied, vget_low_s16(kernelVector[i]), vld1_s16(&interpolationBuffer[0][i << 3]));
 
-	multiplied = vmlal_s16(multiplied, vget_high_s16(kernelVector[i]), interpolationBuffer[0][(i << 1) + 1]);
+	multiplied = vmlal_s16(multiplied, vget_high_s16(kernelVector[i]), vld1_s16(&interpolationBuffer[0][(i << 3) + 4]));
 }
 
 int32x2_t twosies = vadd_s32(vget_high_s32(multiplied), vget_low_s32(multiplied));
@@ -63,11 +63,13 @@ if (numChannelsNow == 2) {
 	for (int32_t i = 0; i < (kInterpolationMaxNumSamples >> 3); i++) {
 
 		if (i == 0)
-			multiplied = vmull_s16(vget_low_s16(kernelVector[i]), interpolationBuffer[1][i << 1]);
+			multiplied = vmull_s16(vget_low_s16(kernelVector[i]), vld1_s16(&interpolationBuffer[1][i << 3]));
 		else
-			multiplied = vmlal_s16(multiplied, vget_low_s16(kernelVector[i]), interpolationBuffer[1][i << 1]);
+			multiplied =
+			    vmlal_s16(multiplied, vget_low_s16(kernelVector[i]), vld1_s16(&interpolationBuffer[1][i << 3]));
 
-		multiplied = vmlal_s16(multiplied, vget_high_s16(kernelVector[i]), interpolationBuffer[1][(i << 1) + 1]);
+		multiplied =
+		    vmlal_s16(multiplied, vget_high_s16(kernelVector[i]), vld1_s16(&interpolationBuffer[1][(i << 3) + 4]));
 	}
 
 	int32x2_t twosies = vadd_s32(vget_high_s32(multiplied), vget_low_s32(multiplied));

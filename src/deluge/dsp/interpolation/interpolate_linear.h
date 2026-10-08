@@ -19,7 +19,7 @@
 int16_t strength2 = oscPos >> 9;
 int16_t strength1 = 32767 - strength2;
 
-sampleRead[0] = (interpolationBuffer[0][0][1] * strength1) + (interpolationBuffer[0][0][0] * strength2);
+sampleRead[0] = (interpolationBuffer[0][1] * strength1) + (interpolationBuffer[0][0] * strength2);
 if (numChannelsNow == 2) {
-	sampleRead[1] = (interpolationBuffer[1][0][1] * strength1) + (interpolationBuffer[1][0][0] * strength2);
+	sampleRead[1] = (interpolationBuffer[1][1] * strength1) + (interpolationBuffer[1][0] * strength2);
 }

@@ -97,7 +97,7 @@ public:
 	uint8_t reassessmentAction;
 	int8_t interpolationBufferSizeLastTime; // 0 if was previously switched off
 
-	int16x4_t interpolationBuffer[2][kInterpolationMaxNumSamples >> 2];
+	alignas(int16x4_t) int16_t interpolationBuffer[2][kInterpolationMaxNumSamples];
 
 	Cluster* clusters[kNumClustersLoadedAhead];
 

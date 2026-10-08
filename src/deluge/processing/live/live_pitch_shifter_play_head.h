@@ -51,7 +51,7 @@ public:
 	int32_t rawBufferReadPos;
 	uint32_t oscPos;
 
-	int16x4_t interpolationBuffer[2][kInterpolationMaxNumSamples >> 2];
+	alignas(int16x4_t) int16_t interpolationBuffer[2][kInterpolationMaxNumSamples];
 
 	uint32_t percPos;
 
